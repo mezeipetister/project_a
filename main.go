@@ -18,9 +18,48 @@
 
 package main
 
-import "fmt"
+import (
+	// "fmt"
+	"html/template"
+	"net/http"
+	"time"
+)
 
-// Main function
+var templates = template.Must(template.ParseGlob("templates/*"))
+
+func index(w http.ResponseWriter, r *http.Request) {
+	type _data struct {
+		Title string
+	}
+	data := _data{Title: "LoremIpsumDolorem"}
+	templates.ExecuteTemplate(w, "base", data)
+}
+
+type Counter struct {
+	i int
+	a int
+}
+
+func waitCounter(done chan bool) {
+	// Counter variable counter
+	counter := Counter{0, 0}
+	for i := 0; i < 10; i++ {
+		counter.i++
+		counter.a += 3
+		time.Sleep(1 * time.Second)
+	}
+	done <- true
+}
+
+// lorem asd
+// TODO: Wohooo
 func main() {
-	fmt.Printf("Hello World")
+
+	done := make(chan bool)
+	go waitCounter(done)
+	<-done
+
+	// 	fmt.Println("Project A\nLicense:\tGNU GPLv2.0\nAuthor:\t\tPeter Mezei")
+	// 	http.HandleFunc("/", index)
+	// 	http.ListenAndServe(":8080", nil)
 }
