@@ -25,6 +25,7 @@ import (
 	"time"
 )
 
+// templates
 var templates = template.Must(template.ParseGlob("templates/*"))
 
 func index(w http.ResponseWriter, r *http.Request) {
