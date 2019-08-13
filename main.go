@@ -19,7 +19,7 @@
 package main
 
 import (
-	// "fmt"
+	"fmt"
 	"html/template"
 	"net/http"
 	"time"
@@ -52,9 +52,16 @@ func waitCounter(done chan bool) {
 	done <- true
 }
 
+func sumTwo(a, b int) int {
+	return a + b
+}
+
 // lorem asd
 // TODO: Wohooo
 func main() {
+
+	fmt.Printf("Sum of 2, 7 is: %d",
+		sumTwo(2, 7))
 
 	done := make(chan bool)
 	go waitCounter(done)
