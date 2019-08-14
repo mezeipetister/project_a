@@ -69,3 +69,21 @@ func CreateToken(username string) (string, error) {
 
 	return tokenString, nil
 }
+
+// ValidateToken gets token as string and a claims pointer
+// validate token, if error occures, then returns it,
+// if token is valid, puts its claims content into the
+// claims pointer
+func ValidateToken(tokenString string, claims *claims) error {
+	tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return jwtKey, nil
+	})
+	if err != nil {
+		return fmt.Errorf("Error occured while validate Token, error message is: %s",
+			jwt.ErrSignatureInvalid)
+	}
+	if !tkn.Valid {
+		return fmt.Errorf("Error while validate JWT token. Token is invalid")
+	}
+	return nil
+}

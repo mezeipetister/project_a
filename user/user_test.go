@@ -32,3 +32,25 @@ func TestGetToken(t *testing.T) {
 		t.Errorf("Token error, len is 0")
 	}
 }
+
+// Validate JWT token
+// and its calims payload.
+func TestValidateToken(t *testing.T) {
+	username := "loremIpsum"
+	token, err := CreateToken(username)
+	if err != nil {
+		t.Errorf("Error while creating JWT token. Message is: %s", err)
+	}
+	if len(token) == 0 {
+		t.Errorf("Token error, len is 0")
+	}
+
+	claims := &claims{}
+	errr := ValidateToken(token, claims)
+	if err != nil {
+		t.Errorf("Error while validate token!: %s", errr)
+	}
+	if claims.Username != username {
+		t.Errorf("Validated token username is not eq with the original username!")
+	}
+}
