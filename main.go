@@ -20,9 +20,9 @@ package main
 
 import (
 	"fmt"
+	"github.com/mezeipetister/project_a/user"
 	"html/template"
 	"net/http"
-	"project_a/user"
 	"time"
 )
 
