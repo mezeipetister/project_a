@@ -6,4 +6,5 @@ main:
 	go build -o main -compiler="gccgo" -gccgoflags="-g"
 
 test:
-	go test ./...
+	go test ./... -v
+	go test ./... -race
