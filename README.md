@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mezeipetister/project_a.svg?branch=master)](https://travis-ci.org/mezeipetister/project_a)
+
 # project_a
 
 Agri technology (machines) info sharing site
