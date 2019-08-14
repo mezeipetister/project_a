@@ -6,6 +6,9 @@ go:
 
 before_install:
   - go get ./...
+
+go_import_path:
+  - project_a/user
   
 script:
   - go test ./... -v
