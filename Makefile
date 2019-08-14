@@ -1,6 +1,9 @@
 # Golang demo
 
-.PHONY: debug
+.PHONY: test
 
-debug :
-	gccgo -g -o main main.go
+main:
+	go build -o main -compiler="gccgo" -gccgoflags="-g"
+
+test:
+	go test ./...

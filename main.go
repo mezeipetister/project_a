@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"html/template"
 	"net/http"
+	"project_a/user"
 	"time"
 )
 
@@ -77,6 +78,10 @@ func main() {
 
 	fmt.Printf("Sum of 2, 7 is: %d",
 		sumTwo(2, 7))
+
+	token, _ := user.CreateToken("LoremIpsum")
+	fmt.Printf("Token demo is: %s",
+		token)
 
 	done := make(chan bool)
 	go waitCounter(done)
