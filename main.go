@@ -23,71 +23,25 @@ import (
 	"github.com/mezeipetister/project_a/user"
 	"html/template"
 	"net/http"
-	"time"
 )
 
 // templates
-var templates = template.Must(template.ParseGlob("templates/*"))
+var templates = template.Must(template.ParseGlob("templates/*.html"))
 
 func index(w http.ResponseWriter, r *http.Request) {
 	type _data struct {
 		Title string
 	}
-	data := _data{Title: "LoremIpsumDolorem"}
+	data := _data{Title: "Project_A!"}
 	templates.ExecuteTemplate(w, "base", data)
 }
 
-// Counter is a test struct
-type Counter struct {
-	i int
-	a int
-}
-
-func waitCounter(done chan bool) {
-	// Counter variable counter
-	counter := Counter{0, 0}
-	for i := 0; i < 10; i++ {
-		counter.i++
-		counter.a += 3
-		time.Sleep(1 * time.Second)
-	}
-	done <- true
-}
-
-func sumTwo(a, b int) int {
-	return a + b
-}
-
-func modAandB(a, b *int) {
-	*a = 8
-	*b = 9
-}
-
-// lorem asd
-// TODO: Wohooo
 func main() {
-
-	a, b := 1, 2
-
-	c, d := &a, &b
-
-	modAandB(c, d)
-
-	fmt.Printf("A: %d, B: %d\n",
-		a, b)
-
-	fmt.Printf("Sum of 2, 7 is: %d",
-		sumTwo(2, 7))
-
 	token, _ := user.CreateToken("LoremIpsum")
-	fmt.Printf("Token demo is: %s",
+	fmt.Printf("!!! Token demo is: %s",
 		token)
 
-	done := make(chan bool)
-	go waitCounter(done)
-	<-done
-
-	// 	fmt.Println("Project A\nLicense:\tGNU GPLv2.0\nAuthor:\t\tPeter Mezei")
-	// 	http.HandleFunc("/", index)
-	// 	http.ListenAndServe(":8080", nil)
+	fmt.Println("Project A\nLicense:\tGNU GPLv2.0\nAuthor:\t\tPeter Mezei")
+	http.HandleFunc("/", index)
+	http.ListenAndServe(":8080", nil)
 }
