@@ -36,6 +36,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "base", data)
 }
 
+// Counter is a test struct
 type Counter struct {
 	i int
 	a int
@@ -56,9 +57,23 @@ func sumTwo(a, b int) int {
 	return a + b
 }
 
+func modAandB(a, b *int) {
+	*a = 8
+	*b = 9
+}
+
 // lorem asd
 // TODO: Wohooo
 func main() {
+
+	a, b := 1, 2
+
+	c, d := &a, &b
+
+	modAandB(c, d)
+
+	fmt.Printf("A: %d, B: %d\n",
+		a, b)
 
 	fmt.Printf("Sum of 2, 7 is: %d",
 		sumTwo(2, 7))
