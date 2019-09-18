@@ -1,20 +1,9 @@
 dist: xenial
 
-language: go
+language: rust
 
-go:
-  - 1.12.x
-
-install: true
-
-notifications:
-  email: false
-
-before_install:
-  - go get ./...
-
-install:
-  - go get github.com/mezeipetister/project_a
+rust:
+  - nightly
   
 script:
-  - go test -v -race ./...
+  - make test
