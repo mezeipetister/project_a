@@ -1,0 +1,1 @@
+[ ] favicon.ico is missing, error on each page load. It's a kind of pity

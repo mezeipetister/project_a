@@ -1,13 +1,11 @@
-# Golang demo
-.PHONY: watch test
+.PHONY: release, test
 
-main:
-	go build -o main -compiler="gccgo" -gccgoflags="-g"
+release:
+	cargo build --release
+	strip target/release/project_a
 
-watch:
-	gin -a 8080 -p 3000 -b main --all main.go \
-	& browser-sync start -f './main' -p localhost:3000 --reload-delay 500
+build:
+	cargo build
 
 test:
-	go test ./... -v
-	go test ./... -race
+	cargo test
