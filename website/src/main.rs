@@ -1,17 +1,17 @@
 // Copyright (C) 2019 Peter Mezei
-// 
+//
 // This file is part of Project A.
-// 
+//
 // Project A is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // Project A is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
@@ -24,7 +24,8 @@ extern crate serde_derive;
 #[cfg(test)]
 mod tests;
 
-use rocket::response::Redirect;
+use rocket::http::RawStr;
+use rocket::response::{status, Redirect};
 use rocket::Request;
 use rocket_contrib::templates::{handlebars, Template};
 use serde::Serialize;
@@ -56,6 +57,11 @@ fn hello(name: String) -> Template {
     )
 }
 
+#[get("/submit_order?<name>&<age>")]
+fn submit_order(name: &RawStr, age: usize) -> status::Accepted<String> {
+    status::Accepted(Some(format!("Hello bello: {}, your age is: {}", name, age)))
+}
+
 #[get("/about")]
 fn about() -> Template {
     Template::render(
@@ -78,6 +84,42 @@ fn about2() -> Template {
             name: None,
             items: vec!["Four", "Five", "Six"],
             parent: "layout2",
+        },
+    )
+}
+
+#[get["/login"]]
+fn login() -> Template {
+    #[derive(Serialize)]
+    struct Data {
+        title: &'static str,
+        name: &'static str,
+        age: u32,
+        parent: &'static str,
+    }
+    Template::render(
+        "login",
+        &Data {
+            title: "Login",
+            name: "Peter Mezei",
+            age: 30,
+            parent: "layout",
+        },
+    )
+}
+
+#[get["/logout"]]
+fn logout() -> Template {
+    #[derive(Serialize)]
+    struct C {
+        title: &'static str,
+        parent: &'static str,
+    };
+    Template::render(
+        "logout",
+        &C {
+            title: "Logout",
+            parent: "layout",
         },
     )
 }
@@ -111,7 +153,10 @@ fn wow_helper(
 
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
-        .mount("/", routes![index, hello, about, about2])
+        .mount(
+            "/",
+            routes![index, hello, about, about2, submit_order, login, logout],
+        )
         .register(catchers![not_found])
         .attach(Template::custom(|engines| {
             engines

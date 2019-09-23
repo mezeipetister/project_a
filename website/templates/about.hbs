@@ -1,0 +1,19 @@
+{{#*inline "page"}}
+
+<section id="about">
+  <h1>Here's another page!! {{ name }}.</h1>
+  <h2>And this is a header 2! Too!</h2>
+  <form action="/submit_order" method="GET">
+    <input type="text" name="name" id="name" placeholder="Name"><br>
+    <input type="text" name="age" id="age" placeholder="Age"><br>
+    <input type="submit" value="Send">
+  </form>
+  <ul>
+    {{#each items}}
+      <li>{{ this }}</li>
+    {{/each}}
+  </ul>
+</section>
+
+{{/inline}}
+{{~> (parent)~}}
