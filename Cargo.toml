@@ -2,5 +2,5 @@
 
 members = [
     "core-lib",
-    "website"
+    "cli"
 ]
