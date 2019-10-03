@@ -14,8 +14,7 @@ License: GNU GPLv2.0
 
 Release build:
 
-- cargo build --release
-- strip target/release/project_a
+- make release
 
 Links:
 
