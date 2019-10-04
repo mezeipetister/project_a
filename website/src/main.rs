@@ -127,6 +127,11 @@ fn login() -> Template {
     )
 }
 
+#[post["/login"]]
+fn login_post() -> Redirect {
+    Redirect::to("/")
+}
+
 #[get["/logout"]]
 fn logout() -> Template {
     #[derive(Serialize)]
@@ -162,6 +167,7 @@ fn rocket() -> rocket::Rocket {
             routes![
                 static_file,
                 index,
+                login_post,
                 redirect,
                 hello,
                 about,

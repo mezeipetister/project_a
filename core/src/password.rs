@@ -19,8 +19,7 @@ use bcrypt::{hash, verify};
 use rand::Rng;
 
 /// # Hash password
-/// ## Readme
-/// Get a password string pointer, returns a result<String, String>
+/// Get a password string pointer, returns a Result<String, String>
 /// ```rust
 /// use core_lib::password::hash_password;
 /// let hash = hash_password(&"purple dog".to_owned()).unwrap();
@@ -34,6 +33,17 @@ pub fn hash_password(password: &String) -> Result<String, String> {
     }
 }
 
+
+/// # Verify password from hash
+/// Gets a password and hash pointer and returns a Result<bool, String>
+/// True if verify succeed, false otherwise.
+/// ```rust
+/// use core_lib::password::{verify_password_from_hash, hash_password};
+/// let hash = hash_password(&"purple_dog".to_owned()).unwrap();
+/// let result: bool = verify_password_from_hash(
+///                         &"purple_dog".to_owned(),
+///                         &hash).unwrap();
+/// ```
 pub fn verify_password_from_hash(password: &String, hash: &String) -> Result<bool, String> {
     match verify(password, &hash) {
         Ok(result) => Ok(result),
@@ -41,6 +51,13 @@ pub fn verify_password_from_hash(password: &String, hash: &String) -> Result<boo
     }
 }
 
+/// # Generate random password
+/// Set a length or leave it None.
+/// Returns a random password aA-zZ, 0-9
+/// ```rust
+/// use core_lib::password::generate_random_password;
+/// let password = generate_random_password(None).unwrap();
+/// ```
 pub fn generate_random_password(length: Option<u32>) -> Result<String, String> {
     let mut rng = rand::thread_rng();
     let mut password = "".to_owned();
