@@ -150,7 +150,7 @@ fn logout() -> Template {
 
 #[get("/static/<file..>")]
 pub fn static_file(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("www/static/").join(file)).ok()
+    NamedFile::open(Path::new("static/").join(file)).ok()
 }
 
 #[catch(404)]

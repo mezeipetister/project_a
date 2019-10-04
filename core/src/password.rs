@@ -33,7 +33,6 @@ pub fn hash_password(password: &String) -> Result<String, String> {
     }
 }
 
-
 /// # Verify password from hash
 /// Gets a password and hash pointer and returns a Result<bool, String>
 /// True if verify succeed, false otherwise.
