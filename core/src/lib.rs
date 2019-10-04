@@ -15,13 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-extern crate crypto;
-extern crate jwt as jsonwebtoken;
-#[macro_use]
-extern crate serde_derive;
+extern crate bcrypt;
+extern crate rand;
 
-pub mod jwt;
-
-pub fn demo_function() -> String {
-    "HelloWorld".to_string()
-}
+pub mod password;
+pub mod user;

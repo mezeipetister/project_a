@@ -12,9 +12,5 @@ codegen-units = 1
 panic = 'abort'
 
 [dependencies]
-dirs = "*"
-serde = "*"
-serde_derive = "*"
-serde_yaml = "*"
-rust-crypto = "*"
-jwt = "*"
+bcrypt = "*"
+rand = "*"
