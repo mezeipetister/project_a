@@ -5,15 +5,14 @@
   <h3>Here are your items:</h3>
   <ul>
     {{#each items}}
-      <li>{{ this }}</li>
+    <li>{{ this }}</li>
     {{/each}}
   </ul>
 </section>
 
-<section id="custom-helper">
-  <p>Try going to <a href="/hello/YourName">/hello/YourName</a>.</p>
-  <p>Also, check {{ wow "this" }} (custom helper) out!</p>
-</section>
+<p>
+  <img src="/static/jupiter.png" alt="Jupiter planet image">
+</p>
 
 {{/inline}}
 {{~> (parent)~}}

@@ -24,11 +24,17 @@ extern crate serde_derive;
 #[cfg(test)]
 mod tests;
 
+use self::handlebars::{
+    Context, Handlebars, Helper, HelperResult, JsonRender, Output, RenderContext,
+};
 use rocket::http::RawStr;
-use rocket::response::{status, Redirect};
+use rocket::response::{status, NamedFile, Redirect};
 use rocket::Request;
+use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::{handlebars, Template};
 use serde::Serialize;
+use std::io;
+use std::path::{Path, PathBuf};
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -40,8 +46,21 @@ struct TemplateContext {
 }
 
 #[get("/")]
-fn index() -> Redirect {
-    Redirect::to("/hello/Unknown")
+fn index() -> Template {
+    Template::render(
+        "index",
+        &TemplateContext {
+            title: "Index",
+            name: None,
+            items: Vec::new(),
+            parent: "layout",
+        },
+    )
+}
+
+#[get("/redirect")]
+fn redirect() -> Redirect {
+    Redirect::to("/")
 }
 
 #[get("/hello/<name>")]
@@ -124,6 +143,11 @@ fn logout() -> Template {
     )
 }
 
+#[get("/static/<file..>")]
+pub fn static_file(file: PathBuf) -> Option<NamedFile> {
+    NamedFile::open(Path::new("www/static/").join(file)).ok()
+}
+
 #[catch(404)]
 fn not_found(req: &Request<'_>) -> Template {
     let mut map = std::collections::HashMap::new();
@@ -131,38 +155,24 @@ fn not_found(req: &Request<'_>) -> Template {
     Template::render("error/404", &map)
 }
 
-use self::handlebars::{
-    Context, Handlebars, Helper, HelperResult, JsonRender, Output, RenderContext,
-};
-
-fn wow_helper(
-    h: &Helper<'_, '_>,
-    _: &Handlebars,
-    _: &Context,
-    _: &mut RenderContext<'_>,
-    out: &mut dyn Output,
-) -> HelperResult {
-    if let Some(param) = h.param(0) {
-        out.write("<b><i>")?;
-        out.write(&param.value().render())?;
-        out.write("</b></i>")?;
-    }
-
-    Ok(())
-}
-
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
         .mount(
             "/",
-            routes![index, hello, about, about2, submit_order, login, logout],
+            routes![
+                static_file,
+                index,
+                redirect,
+                hello,
+                about,
+                about2,
+                submit_order,
+                login,
+                logout
+            ],
         )
+        .attach(Template::fairing())
         .register(catchers![not_found])
-        .attach(Template::custom(|engines| {
-            engines
-                .handlebars
-                .register_helper("wow", Box::new(wow_helper));
-        }))
 }
 
 fn main() {

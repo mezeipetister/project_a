@@ -1,0 +1,2 @@
+- [ ] website publish process: template and rocket.toml copying should be in the process.
+- [ ] rocket template folder move in website! Workspace?
