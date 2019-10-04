@@ -19,3 +19,5 @@ Release build:
 Links:
 
 [Opened issues](/issues.md)
+[TODOs](/TODO.md)
+[Development documentations](/docs)
