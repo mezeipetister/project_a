@@ -1,2 +1,3 @@
 - [ ] website publish process: template and rocket.toml copying should be in the process.
+- [ ] rocket assets folder path should be a part of the publish process.
 - [ ] rocket template folder move in website! Workspace?
