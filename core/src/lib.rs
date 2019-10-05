@@ -17,6 +17,13 @@
 
 extern crate bcrypt;
 extern crate rand;
+extern crate lettre;
+extern crate lettre_email;
 
-pub mod password;
 pub mod user;
+pub mod prelude;
+pub mod email;
+
+pub use user::login::*;
+pub use user::password::*;
+pub use user::user::*;
