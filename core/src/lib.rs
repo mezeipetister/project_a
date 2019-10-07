@@ -16,13 +16,13 @@
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
 extern crate bcrypt;
-extern crate rand;
 extern crate lettre;
 extern crate lettre_email;
+extern crate rand;
 
-pub mod user;
-pub mod prelude;
 pub mod email;
+pub mod prelude;
+pub mod user;
 
 pub use user::login::*;
 pub use user::password::*;
