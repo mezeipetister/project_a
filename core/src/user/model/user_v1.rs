@@ -29,6 +29,13 @@ pub struct UserV1 {
 }
 
 impl User for UserV1 {
+    /// # New user
+    /// generating new user with None default values.
+    /// ```rust
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// use core_lib::user::User;
+    /// let user = UserV1::new();
+    /// ```
     fn new() -> UserV1 {
         UserV1 {
             id: None,
@@ -39,6 +46,15 @@ impl User for UserV1 {
             password_hash: None,
         }
     }
+    /// # Get user ID
+    /// Some(String) or None
+    /// ```rust
+    /// use core_lib::user::model::user_v1::*;
+    /// use core_lib::user::User;
+    /// let mut user: UserV1 = User::new();
+    /// user.set_user_id("example").unwrap();
+    /// let user_id = user.get_user_id();
+    /// ```
     fn get_user_id(&self) -> Option<String> {
         self.id.clone()
     }

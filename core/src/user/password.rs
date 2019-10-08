@@ -81,6 +81,14 @@ pub fn generate_random_password(length: Option<u32>) -> Result<String, String> {
     return Ok(password);
 }
 
+/// # Validate password
+/// Validate password to check it is strong enough.
+/// What we check is *password length*, *uppercase character frequency*,
+/// *lowercase character frequency* and *number frequency*.
+/// ```rust
+/// use core_lib::user::password::validate_password;
+/// assert_eq!(validate_password("DEmoPassWord1234789").is_ok(), true);
+/// ```
 pub fn validate_password(password: &str) -> Result<(), String> {
     let min_password_len = 7;
     let min_character_lowercase = 2;
