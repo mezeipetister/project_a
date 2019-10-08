@@ -139,6 +139,7 @@ impl User for UserV1 {
 #[cfg(test)]
 mod tests {
     use super::*;
+
     #[test]
     fn test_user_id() {
         let mut user: UserV1 = User::new();
@@ -152,6 +153,7 @@ mod tests {
         // Test that it's not overwritten, and all letter is lovercase
         assert_eq!(user.get_user_id(), Some("demo_user".to_owned()));
     }
+
     #[test]
     fn test_user_email() {
         let mut user: UserV1 = User::new();
@@ -165,6 +167,7 @@ mod tests {
         // Check email wether email is correct
         assert_eq!(user.get_user_email(), Some("demo@company.com".to_owned()));
     }
+
     #[test]
     fn test_user_name() {
         let mut user: UserV1 = User::new();
@@ -184,6 +187,7 @@ mod tests {
         assert_eq!(user.set_user_address("addr").is_err(), true); // should be err
         assert_eq!(user.get_user_address(), Some(address.to_owned()))
     }
+
     #[test]
     fn test_user_phone() {
         let mut user: UserV1 = User::new();
@@ -193,20 +197,23 @@ mod tests {
         assert_eq!(user.set_user_phone("phn").is_err(), true); // should be err
         assert_eq!(user.get_user_phone(), Some(phone_number.to_owned()));
     }
+
     #[test]
     fn test_user_set_password() {
         let mut user: UserV1 = User::new();
         let password: &str = "HelloWorld749";
-        let hash: String = hash_password(password).unwrap();
         assert_eq!(user.get_password_hash(), None); // should be None
         assert_eq!(user.set_password("pass").is_err(), true); // should be err
         assert_eq!(user.set_password("PAss7").is_err(), true); // should be err
         assert_eq!(user.set_password("password").is_err(), true); // should be err
         assert_eq!(user.set_password("Password").is_err(), true); // should be err
         assert_eq!(user.set_password("PAssword").is_err(), true); // should be err
-        assert_eq!(user.set_password("PAssword7").is_ok(), true); // should be err
         assert_eq!(user.set_password("PAssword7").is_ok(), true); // should be ok
         assert_eq!(user.set_password(password).is_ok(), true); // should be ok
-        assert_eq!(user.get_password_hash(), Some(hash)); // should match
+        assert_eq!(
+            verify_password_from_hash(password, user.get_password_hash().unwrap().as_ref())
+                .unwrap(),
+            true
+        );
     }
 }

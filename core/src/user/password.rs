@@ -136,10 +136,10 @@ mod tests {
     fn test_verify_password() {
         let password = "purple_dog";
         let hash = hash_password(password).unwrap();
-        assert_eq!(verify_password_from_hash(password, &hash).unwrap(), true);
+        assert_eq!(verify_password_from_hash(password, &hash), Ok(true));
         assert_eq!(
-            verify_password_from_hash("wrong_password", &hash).unwrap(),
-            false
+            verify_password_from_hash("wrong_password", &hash),
+            Ok(false)
         );
     }
 
