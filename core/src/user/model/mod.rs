@@ -15,29 +15,4 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-pub trait General {
-    fn get_name(&self) -> String;
-}
-
-fn demo<T: General>(people: T) {
-    println!("Hi! Your name is: {}", people.get_name());
-}
-
-pub struct D1 {
-    name: String,
-}
-
-impl General for D1 {
-    fn get_name(&self) -> String {
-        format!("{}", self.name)
-    }
-}
-
-fn main() {
-    let peti = D1 {
-        name: "Peti".to_string(),
-    };
-
-    println!("Name is: {}", peti.get_name());
-    demo(peti);
-}
+mod user_v1;

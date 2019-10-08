@@ -15,17 +15,15 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::prelude::result_error_not_implemented;
-
 /// # Login function
 /// Logically manage login process. Once the user found, and the password
 /// is valid, then we return the user id, or an error message.
 /// ```rust
 /// use core_lib::user::login::login;
-/// let login = login(&"demo@user.com".to_owned(), &"demo_password".to_owned()).unwrap();
+/// let login = login("demo@user.com", "demo_password");
 /// ```
-pub fn login(email: &str, password: &str) -> Result<String, String> {
-    result_error_not_implemented()
+pub fn login<'a>(email: &'a str, password: &'a str) -> Result<&'a str, String> {
+    Err("Not implemented".to_owned())
 }
 
 /// # Logout function
@@ -34,7 +32,7 @@ pub fn login(email: &str, password: &str) -> Result<String, String> {
 /// should delete the user-token from the browser. If the user tries to
 /// access the system using the
 pub fn logout() -> Result<String, String> {
-    result_error_not_implemented()
+    Err("Not implemented".to_owned())
 }
 
 /// # Validate access token
@@ -43,7 +41,7 @@ pub fn logout() -> Result<String, String> {
 /// token is unvalid, or its not in the logged-in list, then return
 /// Err("Error message").
 pub fn validate_access_token(token: &str) -> Result<String, String> {
-    result_error_not_implemented()
+    Err("Not implemented".to_owned())
 }
 
 #[cfg(test)]

@@ -21,10 +21,10 @@ use rand::Rng;
 /// # Hash password
 /// Get a password string pointer, returns a Result<String, String>
 /// ```rust
-/// use core_lib::password::hash_password;
-/// let hash = hash_password(&"purple dog".to_owned()).unwrap();
+/// use core_lib::user::password::hash_password;
+/// let hash = hash_password("purple dog").unwrap();
 /// ```
-pub fn hash_password(password: &String) -> Result<String, String> {
+pub fn hash_password<'a>(password: &'a str) -> Result<String, String> {
     //let hashed = hash("hunter2", DEFAULT_COST)?;
     //let valid = verify("hunter2", &hashed)?;
     match hash(password, 6) {
@@ -37,13 +37,13 @@ pub fn hash_password(password: &String) -> Result<String, String> {
 /// Gets a password and hash pointer and returns a Result<bool, String>
 /// True if verify succeed, false otherwise.
 /// ```rust
-/// use core_lib::password::{verify_password_from_hash, hash_password};
-/// let hash = hash_password(&"purple_dog".to_owned()).unwrap();
+/// use core_lib::user::password::{verify_password_from_hash, hash_password};
+/// let hash = hash_password("purple_dog").unwrap();
 /// let result: bool = verify_password_from_hash(
-///                         &"purple_dog".to_owned(),
+///                         "purple_dog",
 ///                         &hash).unwrap();
 /// ```
-pub fn verify_password_from_hash(password: &String, hash: &String) -> Result<bool, String> {
+pub fn verify_password_from_hash<'a>(password: &'a str, hash: &'a str) -> Result<bool, String> {
     match verify(password, &hash) {
         Ok(result) => Ok(result),
         Err(_) => Err("Error while trying verify password from hash".to_owned()),
@@ -54,7 +54,7 @@ pub fn verify_password_from_hash(password: &String, hash: &String) -> Result<boo
 /// Set a length or leave it None.
 /// Returns a random password aA-zZ, 0-9
 /// ```rust
-/// use core_lib::password::generate_random_password;
+/// use core_lib::user::password::generate_random_password;
 /// let password = generate_random_password(None).unwrap();
 /// ```
 pub fn generate_random_password(length: Option<u32>) -> Result<String, String> {
@@ -81,35 +81,83 @@ pub fn generate_random_password(length: Option<u32>) -> Result<String, String> {
     return Ok(password);
 }
 
+pub fn validate_password(password: &str) -> Result<(), String> {
+    let min_password_len = 7;
+    let min_character_lowercase = 2;
+    let min_character_uppercase = 2;
+    let min_numeric_character = 1;
+    let mut character_lowercase: u32 = 0;
+    let mut character_uppercase: u32 = 0;
+    let mut character_numeric: u32 = 0;
+    for ch in password.chars() {
+        // count numeric characters
+        if ch.is_numeric() {
+            character_numeric += 1;
+        }
+        // count lowercase characters
+        if ch.is_lowercase() {
+            character_lowercase += 1;
+        }
+        // count uppercase characters
+        if ch.is_uppercase() {
+            character_uppercase += 1;
+        }
+    }
+    if password.len() >= min_password_len
+        && character_numeric >= min_numeric_character
+        && character_lowercase >= min_character_lowercase
+        && character_uppercase >= min_character_uppercase
+    {
+        Ok(())
+    } else {
+        Err(format!(
+            "Password should be min {} length, should contain min {}
+            lowercase letter, min {} uppercase letter, min {} number",
+            min_password_len,
+            min_character_lowercase,
+            min_character_uppercase,
+            min_numeric_character
+        ))
+    }
+}
+
 // Tests
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
     fn test_hash_password() {
-        use super::*;
-        let password = "purple_dog".to_owned();
-        let hash = hash_password(&password).unwrap();
+        let password = "purple_dog";
+        let hash = hash_password(password).unwrap();
         assert_ne!(hash.len(), password.len());
     }
 
     #[test]
     fn test_verify_password() {
-        use super::*;
-        let password = "purple_dog".to_owned();
-        let hash = hash_password(&password).unwrap();
-        assert_eq!(verify_password_from_hash(&password, &hash).unwrap(), true);
+        let password = "purple_dog";
+        let hash = hash_password(password).unwrap();
+        assert_eq!(verify_password_from_hash(password, &hash).unwrap(), true);
         assert_eq!(
-            verify_password_from_hash(&"wrong_password".to_owned(), &hash).unwrap(),
+            verify_password_from_hash("wrong_password", &hash).unwrap(),
             false
         );
     }
 
     #[test]
     fn test_random_generator() {
-        use super::*;
         assert_eq!(generate_random_password(None).unwrap().len(), 12); // This should be true
         assert_eq!(generate_random_password(Some(5)).unwrap().len(), 5); // This should be true
         assert_eq!(generate_random_password(Some(0)).unwrap().len(), 0); // This should be true
         assert_eq!(generate_random_password(Some(7)).unwrap().len(), 7); // This should be true
+    }
+    #[test]
+    fn test_validate_password() {
+        assert_eq!(validate_password("pass").is_err(), true); // should be err
+        assert_eq!(validate_password("PAss1").is_err(), true); // should be err
+        assert_eq!(validate_password("password").is_err(), true); // should be err
+        assert_eq!(validate_password("Password").is_err(), true); // should be err
+        assert_eq!(validate_password("PASsword").is_err(), true); // should be err
+        assert_eq!(validate_password("Password12").is_err(), true); // should be err
+        assert_eq!(validate_password("PAssword12").is_ok(), true); // should be ok
     }
 }

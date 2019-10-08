@@ -15,20 +15,17 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-fn double(num: i32) -> i32 {
-    num * 2
+pub struct Error {
+    message: String,
 }
 
-fn main() {
-    let x: i32 = 5;
-    let y = &x;
-    let z = &x as *const i32;
-
-    println!("x => {}, y => {}", x, y);
-    println!("x => {}, *y => {}", x, *y);
-    println!("x => {}, &y => {}", x, &y);
-    println!("Z => {:?}", z);
-    println!("y as raw pointer => {:?}", y as *const i32);
-
-    println!("Result: {}", double(*y));
+impl Error {
+    pub fn new(message: &str) -> Result<(), Error> {
+        Err(Error {
+            message: message.to_owned(),
+        })
+    }
+    pub fn get_error_message<'a>(&'a self) -> &'a str {
+        self.message.as_str()
+    }
 }

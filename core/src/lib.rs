@@ -21,9 +21,11 @@ extern crate lettre_email;
 extern crate rand;
 
 pub mod email;
+pub mod error;
 pub mod prelude;
 pub mod user;
 
+pub use error::*;
 pub use user::login::*;
 pub use user::password::*;
 pub use user::user::*;

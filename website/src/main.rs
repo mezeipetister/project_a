@@ -21,9 +21,6 @@
 extern crate rocket;
 extern crate serde_derive;
 
-#[cfg(test)]
-mod tests;
-
 use self::handlebars::{
     Context, Handlebars, Helper, HelperResult, JsonRender, Output, RenderContext,
 };
