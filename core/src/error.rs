@@ -14,17 +14,18 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
-extern crate bcrypt;
-extern crate lettre;
-extern crate lettre_email;
-extern crate rand;
 
-pub mod email;
-pub mod error;
-pub mod prelude;
-pub mod user;
+pub struct Error {
+    message: String,
+}
 
-pub use error::*;
-pub use user::login::*;
-pub use user::password::*;
-pub use user::user::*;
+impl Error {
+    pub fn new(message: &str) -> Result<(), Error> {
+        Err(Error {
+            message: message.to_owned(),
+        })
+    }
+    pub fn get_error_message<'a>(&'a self) -> &'a str {
+        self.message.as_str()
+    }
+}

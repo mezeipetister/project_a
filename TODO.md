@@ -1,2 +1,6 @@
-- [ ] website publish process: template and rocket.toml copying should be in the process.
-- [ ] rocket template folder move in website! Workspace?
+- [ ] Website publish process: template and rocket.toml copying should be in the process.
+- [ ] Rocket assets folder path should be a part of the publish process.
+- [ ] Rocket template folder move in website! Workspace?
+- [ ] Environment variable auto set up on server - using variable file and an env binary.
+- [ ] Email dev and prod mode. User or not use real server. It would be great for internat dummy tests.
+- [ ] Storage planning.

@@ -21,9 +21,6 @@
 extern crate rocket;
 extern crate serde_derive;
 
-#[cfg(test)]
-mod tests;
-
 use self::handlebars::{
     Context, Handlebars, Helper, HelperResult, JsonRender, Output, RenderContext,
 };
@@ -127,6 +124,11 @@ fn login() -> Template {
     )
 }
 
+#[post["/login"]]
+fn login_post() -> Redirect {
+    Redirect::to("/")
+}
+
 #[get["/logout"]]
 fn logout() -> Template {
     #[derive(Serialize)]
@@ -145,7 +147,7 @@ fn logout() -> Template {
 
 #[get("/static/<file..>")]
 pub fn static_file(file: PathBuf) -> Option<NamedFile> {
-    NamedFile::open(Path::new("www/static/").join(file)).ok()
+    NamedFile::open(Path::new("static/").join(file)).ok()
 }
 
 #[catch(404)]
@@ -162,6 +164,7 @@ fn rocket() -> rocket::Rocket {
             routes![
                 static_file,
                 index,
+                login_post,
                 redirect,
                 hello,
                 about,
