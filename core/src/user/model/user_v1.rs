@@ -15,9 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-//use crate::email::*;
+use crate::email;
 use crate::user::password::*;
 use crate::user::User;
+use std::env;
 
 pub struct UserV1 {
     id: Option<String>,
@@ -240,11 +241,36 @@ impl User for UserV1 {
             Ok(password) => password,
             Err(msg) => return Err(msg),
         };
-        self.password_hash = Some(new_password);
-        // TODO: Here we should implement email sending!
-        // TODO: Send new password via email at this point!
-        // There is no way to check the password later. Just using
-        // a new password reset again.
+        self.password_hash = Some(new_password.clone());
+        match email::send_new_email(
+            env::var("E_CLIENT").unwrap().as_ref(),
+            env::var("E_USERNAME").unwrap().as_ref(),
+            env::var("E_PASSWORD").unwrap().as_ref(),
+            &self.email.as_ref().unwrap().as_ref(),
+            &self.name.as_ref().unwrap().as_ref(),
+            env::var("E_FROM").unwrap().as_ref(),
+            "New password",
+            format!(
+                "Hi {}! Your new password: {}",
+                self.name.as_ref().unwrap(),
+                new_password
+            )
+            .as_ref(),
+        ) {
+            Ok(_) => (),
+            // TODO:
+            // Use email pool, in case of email service failure.
+            // Instead of using error in case of error - directly here -,
+            // We should say its Ok(()) now, and in case of error, the email pool,
+            // should manage the trials.
+            Err(msg) => {
+                return Err(format!(
+                    "New password generated and set, but email send faild. Error message: {}",
+                    msg
+                )
+                .to_owned())
+            }
+        }
         Ok(())
     }
 }
@@ -328,5 +354,15 @@ mod tests {
                 .unwrap(),
             true
         );
+    }
+    #[test]
+    #[ignore]
+    fn test_reset_password() {
+        let mut user = UserV1::new();
+        user.set_user_email(&env::var("E_TO_TEST_EMAIL").unwrap())
+            .unwrap();
+        user.set_user_name(&env::var("E_TO_TEST_NAME").unwrap())
+            .unwrap();
+        assert_eq!(user.reset_password().is_ok(), true);
     }
 }

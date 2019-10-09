@@ -19,6 +19,11 @@ use lettre::smtp::authentication::Credentials;
 use lettre::{SmtpClient, Transport};
 use lettre_email::Email;
 
+// TODO: Refactor to split email for production and test use.
+// For test use, it should behave like a real email service,
+// but just simulate the sending process.
+// In production, it should communicate with the email server
+// normally.
 pub fn send_new_email(
     client: &str,
     username: &str,
