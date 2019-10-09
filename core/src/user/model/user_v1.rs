@@ -34,6 +34,7 @@ impl New for UserV1 {
     /// # New user
     /// generating new user with None default values.
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::model::user_v1::UserV1;
     /// use core_lib::user::User;
     /// let user = UserV1::new();
@@ -54,6 +55,7 @@ impl User for UserV1 {
     /// # Get user ID
     /// Some(String) or None
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::model::user_v1::*;
     /// use core_lib::user::User;
     /// let mut user = UserV1::new();
@@ -67,6 +69,7 @@ impl User for UserV1 {
     /// Result<(), String>
     /// Minimum user ID length is 5 characters
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::model::user_v1::*;
     /// use core_lib::user::User;;
     /// let mut user = UserV1::new();
@@ -87,6 +90,7 @@ impl User for UserV1 {
     }
     /// # Get user name
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::*;
     /// let mut user = UserV1::new();
@@ -101,6 +105,7 @@ impl User for UserV1 {
     /// Result<(), String>
     /// Minimum character length is 5
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -117,6 +122,7 @@ impl User for UserV1 {
     /// # Get user address
     /// Option<String>
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let user = UserV1::new();
@@ -129,6 +135,7 @@ impl User for UserV1 {
     /// Result<(), String>
     /// Minimum character length is 10
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -145,6 +152,7 @@ impl User for UserV1 {
     /// # Get user email
     /// Option<String>
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -158,6 +166,7 @@ impl User for UserV1 {
     /// Minimum character length is 5 + must contains the following characters:
     /// @(at sign) .(dot)
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -176,6 +185,7 @@ impl User for UserV1 {
     /// # Get user phone
     /// Option<String>
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -188,6 +198,7 @@ impl User for UserV1 {
     /// Result<(), String>
     /// Minimum character length is 5
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -207,6 +218,7 @@ impl User for UserV1 {
     /// # Get user password as hash
     /// Option<String>
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
@@ -220,6 +232,7 @@ impl User for UserV1 {
     /// Password must have a valid format (minimum 7 characters long,
     /// minimum 1 number, minimum 2 characters with lowercase, minimum 2 characters uppercase)
     /// ```rust
+    /// use core_lib::prelude::New;
     /// use core_lib::user::User;
     /// use core_lib::user::model::user_v1::UserV1;
     /// let mut user = UserV1::new();
