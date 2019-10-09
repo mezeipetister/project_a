@@ -15,6 +15,10 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
+use crate::prelude::*;
+use crate::user::model::user_v1::UserV1;
+use crate::user::User;
+
 /// # Login function
 /// Logically manage login process. Once the user found, and the password
 /// is valid, then we return the user id, or an error message.
@@ -22,7 +26,14 @@
 /// use core_lib::user::login::login;
 /// let login = login("demo@user.com", "demo_password");
 /// ```
-pub fn login<'a>(email: &'a str, password: &'a str) -> Result<&'a str, String> {
+pub fn login<'a>(
+    db: &mut Vec<Box<dyn User>>,
+    email: &'a str,
+    password: &'a str,
+) -> Result<&'a str, String> {
+    for item in db {
+        let id = item.get_user_id();
+    }
     Err("Not implemented".to_owned())
 }
 
@@ -49,7 +60,12 @@ mod tests {
     #[test]
     fn test_login() {
         use super::*;
-        assert_eq!(login("email", "password").is_ok(), false); // Should be false.
+        let mut db: Vec<Box<dyn User>> = Vec::new();
+        db.push(Box::new(UserV1::new()));
+        db.push(Box::new(UserV1::new()));
+        db.push(Box::new(UserV1::new()));
+        db.push(Box::new(UserV1::new()));
+        assert_eq!(login(&mut db, "email", "password").is_ok(), false); // Should be false.
     }
 
     #[test]

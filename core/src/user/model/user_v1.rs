@@ -16,6 +16,7 @@
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
 use crate::email;
+use crate::prelude::*;
 use crate::user::password::*;
 use crate::user::User;
 use std::env;
@@ -29,7 +30,7 @@ pub struct UserV1 {
     password_hash: Option<String>,
 }
 
-impl User for UserV1 {
+impl New for UserV1 {
     /// # New user
     /// generating new user with None default values.
     /// ```rust
@@ -37,7 +38,7 @@ impl User for UserV1 {
     /// use core_lib::user::User;
     /// let user = UserV1::new();
     /// ```
-    fn new() -> UserV1 {
+    fn new() -> Self {
         UserV1 {
             id: None,
             name: None,
@@ -47,6 +48,9 @@ impl User for UserV1 {
             password_hash: None,
         }
     }
+}
+
+impl User for UserV1 {
     /// # Get user ID
     /// Some(String) or None
     /// ```rust
@@ -281,7 +285,7 @@ mod tests {
 
     #[test]
     fn test_user_id() {
-        let mut user: UserV1 = User::new();
+        let mut user: UserV1 = UserV1::new();
         // At this point ID should be None;
         assert_eq!(user.get_user_id(), None);
         user.set_user_id("Demo_user").unwrap();
@@ -295,7 +299,7 @@ mod tests {
 
     #[test]
     fn test_user_email() {
-        let mut user: UserV1 = User::new();
+        let mut user: UserV1 = UserV1::new();
 
         // Check assertions
         assert_eq!(user.set_user_id("demo_user").is_ok(), true); // should be ok
@@ -309,7 +313,7 @@ mod tests {
 
     #[test]
     fn test_user_name() {
-        let mut user: UserV1 = User::new();
+        let mut user: UserV1 = UserV1::new();
         assert_eq!(user.get_user_name(), None);
         assert_eq!(user.set_user_name("abc").is_err(), true); // should be err
         assert_eq!(user.set_user_name("Demo User").is_ok(), true); // should be ok
@@ -319,7 +323,7 @@ mod tests {
 
     #[test]
     fn test_user_address() {
-        let mut user: UserV1 = User::new();
+        let mut user: UserV1 = UserV1::new();
         let address: &str = "747999 Demo Country, Great county, Hello World street 79.";
         assert_eq!(user.get_user_address(), None);
         assert_eq!(user.set_user_address(address).is_ok(), true); // should be ok
@@ -329,7 +333,7 @@ mod tests {
 
     #[test]
     fn test_user_phone() {
-        let mut user: UserV1 = User::new();
+        let mut user: UserV1 = UserV1::new();
         let phone_number: &str = "+99 (701) 479 397129";
         assert_eq!(user.get_user_phone(), None);
         assert_eq!(user.set_user_phone(phone_number).is_ok(), true); // should be ok
@@ -339,7 +343,7 @@ mod tests {
 
     #[test]
     fn test_user_set_password() {
-        let mut user: UserV1 = User::new();
+        let mut user: UserV1 = UserV1::new();
         let password: &str = "HelloWorld749";
         assert_eq!(user.get_password_hash(), None); // should be None
         assert_eq!(user.set_password("pass").is_err(), true); // should be err

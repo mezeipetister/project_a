@@ -15,10 +15,7 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-pub trait New {
-    fn new() -> Self;
-}
-
-pub fn result_error_not_implemented() -> Result<String, String> {
-    Err("Not implemented".to_owned())
+pub trait StorageObject {
+    fn save(&self) -> Result<(), String>;
+    fn reload(&self) -> Result<(), String>;
 }

@@ -21,7 +21,6 @@ pub mod password;
 pub mod user;
 
 pub trait User {
-    fn new() -> Self;
     fn get_user_id(&self) -> Option<String>;
     fn set_user_id(&mut self, user_id: &str) -> Result<(), String>;
     fn get_user_name(&self) -> Option<String>;
