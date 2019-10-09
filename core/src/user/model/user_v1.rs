@@ -51,13 +51,22 @@ impl User for UserV1 {
     /// ```rust
     /// use core_lib::user::model::user_v1::*;
     /// use core_lib::user::User;
-    /// let mut user: UserV1 = User::new();
+    /// let mut user = UserV1::new();
     /// user.set_user_id("example").unwrap();
     /// let user_id = user.get_user_id();
     /// ```
     fn get_user_id(&self) -> Option<String> {
         self.id.clone()
     }
+    /// # Set user ID
+    /// Result<(), String>
+    /// Minimum user ID length is 5 characters
+    /// ```rust
+    /// use core_lib::user::model::user_v1::*;
+    /// use core_lib::user::User;;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.set_user_id("demo_id"), Ok(()));
+    /// ```
     fn set_user_id(&mut self, user_id: &str) -> Result<(), String> {
         if self.id.is_some() {
             Err("UserID already set! It can't be modified!".to_owned())
@@ -71,9 +80,27 @@ impl User for UserV1 {
             }
         }
     }
+    /// # Get user name
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::*;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.get_user_name(), None);
+    /// user.set_user_name("demo_user").unwrap();
+    /// assert_eq!(user.get_user_name(), Some("demo_user".to_owned()));
+    /// ```
     fn get_user_name(&self) -> Option<String> {
         self.name.clone()
     }
+    /// # Set user name
+    /// Result<(), String>
+    /// Minimum character length is 5
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.set_user_name("Demo User"), Ok(()));
+    /// ```
     fn set_user_name(&mut self, name: &str) -> Result<(), String> {
         if name.len() < 5 {
             Err("User name must be longer then 5 character".to_owned())
@@ -82,9 +109,26 @@ impl User for UserV1 {
             Ok(())
         }
     }
+    /// # Get user address
+    /// Option<String>
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let user = UserV1::new();
+    /// assert_eq!(user.get_user_address(), None);
+    /// ```
     fn get_user_address(&self) -> Option<String> {
         self.address.clone()
     }
+    /// # Set user address
+    /// Result<(), String>
+    /// Minimum character length is 10
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.set_user_address("Lorem country Shiny city Beautiful street 35."), Ok(()));
+    /// ```
     fn set_user_address(&mut self, address: &str) -> Result<(), String> {
         if address.len() > 10 {
             self.address = Some(address.to_owned());
@@ -93,9 +137,27 @@ impl User for UserV1 {
             Err("User address must be longer then 10 characters".to_owned())
         }
     }
+    /// # Get user email
+    /// Option<String>
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.get_user_email(), None);
+    /// ```
     fn get_user_email(&self) -> Option<String> {
         self.email.clone()
     }
+    /// # Set user email
+    /// Result<(), String>
+    /// Minimum character length is 5 + must contains the following characters:
+    /// @(at sign) .(dot)
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.set_user_email("user@company.com"), Ok(()));
+    /// ```
     fn set_user_email(&mut self, email: &str) -> Result<(), String> {
         if email.contains("@") && email.contains(".") && email.len() > 5 {
             self.email = Some(email.to_owned());
@@ -106,9 +168,26 @@ impl User for UserV1 {
                 .to_owned())
         }
     }
+    /// # Get user phone
+    /// Option<String>
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.get_user_phone(), None);
+    /// ```
     fn get_user_phone(&self) -> Option<String> {
         self.phone.clone()
     }
+    /// # Set user phone
+    /// Result<(), String>
+    /// Minimum character length is 5
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.set_user_phone("+749 (39) 4759 33279"), Ok(()));
+    /// ```
     fn set_user_phone(&mut self, phone: &str) -> Result<(), String> {
         if phone.len() > 5 {
             self.phone = Some(phone.to_owned());
@@ -120,9 +199,27 @@ impl User for UserV1 {
             )
         }
     }
+    /// # Get user password as hash
+    /// Option<String>
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.get_password_hash(), None);
+    /// ```
     fn get_password_hash(&self) -> Option<String> {
         self.password_hash.clone()
     }
+    /// # Set user password
+    /// Result<(), String>
+    /// Password must have a valid format (minimum 7 characters long,
+    /// minimum 1 number, minimum 2 characters with lowercase, minimum 2 characters uppercase)
+    /// ```rust
+    /// use core_lib::user::User;
+    /// use core_lib::user::model::user_v1::UserV1;
+    /// let mut user = UserV1::new();
+    /// assert_eq!(user.set_password("PAssword1234789"), Ok(()));
+    /// ```
     fn set_password(&mut self, password: &str) -> Result<(), String> {
         let hash = match validate_password(password) {
             Ok(_) => match hash_password(password) {
