@@ -31,7 +31,7 @@ pub fn login<'a>(email: &'a str, password: &'a str) -> Result<&'a str, String> {
 /// and logged in, then removes from the logged-in list. The controller
 /// should delete the user-token from the browser. If the user tries to
 /// access the system using the
-pub fn logout() -> Result<String, String> {
+pub fn logout<'a>(token: &'a str) -> Result<String, String> {
     Err("Not implemented".to_owned())
 }
 
@@ -40,7 +40,7 @@ pub fn logout() -> Result<String, String> {
 /// and its in the logged-in list, then return Ok(user-id), if the
 /// token is unvalid, or its not in the logged-in list, then return
 /// Err("Error message").
-pub fn validate_access_token(token: &str) -> Result<String, String> {
+pub fn validate_access_token<'a>(token: &'a str) -> Result<String, String> {
     Err("Not implemented".to_owned())
 }
 
@@ -55,7 +55,7 @@ mod tests {
     #[test]
     fn test_logout() {
         use super::*;
-        assert_eq!(logout().is_ok(), false);
+        assert_eq!(logout("token").is_ok(), false);
     }
 
     #[test]
