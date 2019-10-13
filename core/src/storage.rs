@@ -15,7 +15,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-use serde::de::DeserializeOwned;
 use serde::{Deserialize, Serialize};
 
 /**
@@ -50,20 +49,25 @@ pub struct Storage<T> {
  *  2) checking schema version
  *  3) try schema update if it's needed.
  */
-// pub fn load_storage<T>(path: &'static str) -> Result<T, String> {
-//     let storage: T = Storage {
-//         path,
-//         data: Vec::new(),
-//     };
-//     Ok(storage)
-// }
+/// # Load storage objects from path
+/// We use turbofish style
+/// ```rust
+/// // TODO: Code goes here
+/// ```
+pub fn load_storage<T>(path: &'static str) -> Result<Storage<T>, String> {
+    let storage: Storage<T> = Storage {
+        path,
+        data: Vec::new(),
+    };
+    Ok(storage)
+}
 
 /**
  * Add StorageObject to Storage and returns NO reference
  */
 pub fn add_to_storage<T>(storage: &mut Storage<T>, storage_object: T) -> Result<(), String>
-    where
-        T: StorageObject,
+where
+    T: StorageObject,
 {
     storage.data.push(storage_object);
     Ok(())
@@ -76,17 +80,24 @@ pub fn add_to_storage_and_return_ref<'a, T>(
     storage: &'a mut Storage<T>,
     storage_object: T,
 ) -> Result<&'a mut T, String>
-    where
-        T: StorageObject,
+where
+    T: StorageObject,
 {
     let id = storage_object.get_id().unwrap().to_owned();
     storage.data.push(storage_object);
+    let mut storage_result_index = 0;
     for item in &mut storage.data {
         if item.get_id().unwrap() == id {
-            return Ok(&mut item);
+            break;
         }
+        storage_result_index += 1;
     }
-    Err("Error while inser & find reference to it in storage.".to_owned())
+    match storage.data.get_mut(storage_result_index) {
+        Some(data_item) => Ok(data_item),
+        None => Err(format!(
+            "Error while getting reference to the new storage item."
+        )),
+    }
 }
 
 /**
@@ -105,8 +116,8 @@ pub fn serialize_object<T: Serialize>(object: &T) -> Result<String, String> {
 /// IMPORTANT: deserializable struct currently cannot have &str field.
 //  TODO: Lifetime fix for `&str field type.
 pub fn deserialize_object<'a, T: ?Sized>(s: &str) -> Result<T, String>
-    where
-            for<'de> T: Deserialize<'de> + 'a,
+where
+    for<'de> T: Deserialize<'de> + 'a,
 {
     match serde_yaml::from_str(s) {
         Ok(t) => Ok(t),
@@ -177,33 +188,28 @@ mod tests {
                 Ok(())
             }
         }
-        let mut storage: Storage<Example> = Storage {
-            path: "data/storage",
-            data: Vec::new(),
-        };
+        let mut storage = load_storage::<Example>("data/storage").unwrap();
         for item in 1..3 {
-            storage.data.push(Example::new(&format!("{}", item),
-                                           "data/storage", &format!("Name_{}", item)));
+            storage.data.push(Example::new(
+                &format!("{}", item),
+                "data/storage",
+                &format!("{}", item),
+            ));
         }
-        add_to_storage(&mut storage, Example::new("102",
-                                                  "data/storage", "102")).unwrap();
-        add_to_storage(&mut storage, Example::new("103",
-                                                  "data/storage", "103")).unwrap();
-        add_to_storage(&mut storage, Example::new("104",
-                                                  "data/storage", "104")).unwrap();
+        add_to_storage(&mut storage, Example::new("102", "data/storage", "102")).unwrap();
+        add_to_storage(&mut storage, Example::new("103", "data/storage", "103")).unwrap();
+        add_to_storage(&mut storage, Example::new("104", "data/storage", "104")).unwrap();
 
-        let mut item = add_to_storage_and_return_ref(&mut storage, &mut Example::new("105",
-                                                                                     "data/storage", "105")).unwrap();
+        let mut item =
+            add_to_storage_and_return_ref(&mut storage, Example::new("105", "data/storage", "105"))
+                .unwrap();
         item.name = "1009".to_owned();
 
-        for _item in &storage.data {
-            let item = item.get_id().unwrap();
-            assert_eq!(item, "1");
-            assert_eq!(item, "2");
-            assert_eq!(item, "3");
-            assert_eq!(item, "102");
-            assert_eq!(item, "103");
-            assert_eq!(item, "1009");
-        }
+        assert_eq!(storage.data.get(0).unwrap().name, "1");
+        assert_eq!(storage.data.get(1).unwrap().name, "2");
+        assert_eq!(storage.data.get(2).unwrap().name, "102");
+        assert_eq!(storage.data.get(3).unwrap().name, "103");
+        assert_eq!(storage.data.get(4).unwrap().name, "104");
+        assert_eq!(storage.data.get(5).unwrap().name, "1009");
     }
 }
