@@ -74,7 +74,7 @@ pub fn generate_random_password(length: Option<u32>) -> Result<String, String> {
         // Random uppercase
         // TODO: uppercase does not work!
         let random_ch: char = match rng.gen_range(0, 1) {
-            1 => random_ch.to_uppercase().nth(0).unwrap(),
+            1 => random_ch.clone(),
             _ => random_ch.clone(),
         };
         password.push(random_ch);

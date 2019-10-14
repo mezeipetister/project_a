@@ -26,14 +26,7 @@ use crate::user::User;
 /// use core_lib::user::login::login;
 /// let login = login("demo@user.com", "demo_password");
 /// ```
-pub fn login<'a>(
-    db: &mut Vec<Box<dyn User>>,
-    email: &'a str,
-    password: &'a str,
-) -> Result<&'a str, String> {
-    for item in db {
-        let id = item.get_user_id();
-    }
+pub fn login<'a>(email: &'a str, password: &'a str) -> Result<&'a str, String> {
     Err("Not implemented".to_owned())
 }
 
@@ -57,26 +50,19 @@ pub fn validate_access_token<'a>(token: &'a str) -> Result<String, String> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     #[test]
     fn test_login() {
-        use super::*;
-        let mut db: Vec<Box<dyn User>> = Vec::new();
-        db.push(Box::new(UserV1::new()));
-        db.push(Box::new(UserV1::new()));
-        db.push(Box::new(UserV1::new()));
-        db.push(Box::new(UserV1::new()));
-        assert_eq!(login(&mut db, "email", "password").is_ok(), false); // Should be false.
+        assert_eq!(login("email", "password").is_ok(), false); // Should be false.
     }
 
     #[test]
     fn test_logout() {
-        use super::*;
         assert_eq!(logout("token").is_ok(), false);
     }
 
     #[test]
     fn test_validate_token() {
-        use super::*;
         assert_eq!(validate_access_token("token").is_ok(), false);
     }
 }
