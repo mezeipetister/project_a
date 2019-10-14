@@ -97,9 +97,9 @@ where
         match fs::create_dir_all(path) {
             Ok(_) => (),
             Err(_) => {
-                return Err(format!(
-                    "Path does not exist. Trying to create path, but an error occured."
-                ));
+                return Err(
+                    "Path does not exist. Trying to create path, but an error occured.".to_owned(),
+                );
             }
         }
     } else {
@@ -232,9 +232,7 @@ where
     }
     match storage.data.get_mut(storage_result_index) {
         Some(data_item) => Ok(data_item),
-        None => Err(format!(
-            "Error while getting reference to the new storage item."
-        )),
+        None => Err("Error while getting reference to the new storage item.".to_owned()),
     }
 }
 
@@ -299,11 +297,12 @@ where
         storage_object.get_id().unwrap(),
     ))
     .unwrap()
-    .write(serialize_object::<T>(storage_object).unwrap().as_bytes())
+    .write_all(serialize_object::<T>(storage_object).unwrap().as_bytes())
     .unwrap();
     Ok(())
 }
 
+// TODO: Refact tests to properly handle storage create and clean.
 #[cfg(test)]
 mod tests {
     use super::*;

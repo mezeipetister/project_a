@@ -24,7 +24,7 @@ use rand::Rng;
 /// use core_lib::user::password::hash_password;
 /// let hash = hash_password("purple dog").unwrap();
 /// ```
-pub fn hash_password<'a>(password: &'a str) -> Result<String, String> {
+pub fn hash_password(password: &str) -> Result<String, String> {
     //let hashed = hash("hunter2", DEFAULT_COST)?;
     //let valid = verify("hunter2", &hashed)?;
     match hash(password, 6) {
@@ -74,12 +74,12 @@ pub fn generate_random_password(length: Option<u32>) -> Result<String, String> {
         // Random uppercase
         // TODO: uppercase does not work!
         let random_ch: char = match rng.gen_range(0, 1) {
-            1 => random_ch.clone(),
-            _ => random_ch.clone(),
+            1 => *random_ch,
+            _ => *random_ch,
         };
         password.push(random_ch);
     }
-    return Ok(password);
+    Ok(password)
 }
 
 /// # Validate password

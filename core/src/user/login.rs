@@ -15,9 +15,9 @@
 // You should have received a copy of the GNU General Public License
 // along with Project A.  If not, see <http://www.gnu.org/licenses/>.
 
-use crate::prelude::*;
-use crate::user::model::user_v1::UserV1;
-use crate::user::User;
+// use crate::prelude::*;
+// use crate::user::model::user_v1::UserV1;
+// use crate::user::User;
 
 /// # Login function
 /// Logically manage login process. Once the user found, and the password
@@ -27,6 +27,8 @@ use crate::user::User;
 /// let login = login("demo@user.com", "demo_password");
 /// ```
 pub fn login<'a>(email: &'a str, password: &'a str) -> Result<&'a str, String> {
+    let _ = email;
+    let _ = password;
     Err("Not implemented".to_owned())
 }
 
@@ -35,7 +37,8 @@ pub fn login<'a>(email: &'a str, password: &'a str) -> Result<&'a str, String> {
 /// and logged in, then removes from the logged-in list. The controller
 /// should delete the user-token from the browser. If the user tries to
 /// access the system using the
-pub fn logout<'a>(token: &'a str) -> Result<String, String> {
+pub fn logout(token: &str) -> Result<String, String> {
+    let _ = token;
     Err("Not implemented".to_owned())
 }
 
@@ -44,7 +47,8 @@ pub fn logout<'a>(token: &'a str) -> Result<String, String> {
 /// and its in the logged-in list, then return Ok(user-id), if the
 /// token is unvalid, or its not in the logged-in list, then return
 /// Err("Error message").
-pub fn validate_access_token<'a>(token: &'a str) -> Result<String, String> {
+pub fn validate_access_token(token: &str) -> Result<String, String> {
+    let _ = token;
     Err("Not implemented".to_owned())
 }
 

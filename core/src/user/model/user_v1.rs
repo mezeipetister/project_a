@@ -83,14 +83,12 @@ impl User for UserV1 {
     fn set_user_id(&mut self, user_id: &str) -> Result<(), String> {
         if self.id.is_some() {
             Err("UserID already set! It can't be modified!".to_owned())
+        } else if user_id.len() <= 5 {
+            Err("UserID length should be bigger then 5 characters.".to_owned())
         } else {
-            if user_id.len() <= 5 {
-                Err("UserID length should be bigger then 5 characters.".to_owned())
-            } else {
-                // Here we set ID as all lowecase
-                self.id = Some(user_id.to_lowercase().to_string());
-                Ok(())
-            }
+            // Here we set ID as all lowecase
+            self.id = Some(user_id.to_lowercase().to_string());
+            Ok(())
         }
     }
     /// # Get user name
@@ -178,7 +176,7 @@ impl User for UserV1 {
     /// assert_eq!(user.set_user_email("user@company.com"), Ok(()));
     /// ```
     fn set_user_email(&mut self, email: &str) -> Result<(), String> {
-        if email.contains("@") && email.contains(".") && email.len() > 5 {
+        if email.contains('@') && email.contains('.') && email.len() > 5 {
             self.email = Some(email.to_owned());
             Ok(())
         } else {
@@ -301,7 +299,7 @@ impl User for UserV1 {
  * StorageObject implementation for UserV1
  */
 impl storage::StorageObject for UserV1 {
-    fn get_id<'a>(&'a self) -> Option<&'a str> {
+    fn get_id(&self) -> Option<&str> {
         match &self.id {
             Some(id) => Some(id.as_ref()),
             None => None,

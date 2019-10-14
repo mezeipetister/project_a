@@ -25,7 +25,7 @@ impl Error {
             message: message.to_owned(),
         })
     }
-    pub fn get_error_message<'a>(&'a self) -> &'a str {
+    pub fn get_error_message(&self) -> &str {
         self.message.as_str()
     }
 }
