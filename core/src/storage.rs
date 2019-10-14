@@ -169,6 +169,7 @@ where
     T: StorageObject,
 {
     storage_object.set_path(storage.path).unwrap();
+    storage_object.save()?;
     storage.data.push(storage_object);
     Ok(())
 }
@@ -213,12 +214,14 @@ where
 /// ```
 pub fn add_to_storage_and_return_ref<T>(
     storage: &mut Storage<T>,
-    storage_object: T,
+    mut storage_object: T,
 ) -> Result<&mut T, String>
 where
     T: StorageObject,
 {
     let id = storage_object.get_id().unwrap().to_owned();
+    storage_object.set_path(storage.path).unwrap();
+    storage_object.save()?;
     storage.data.push(storage_object);
     let mut storage_result_index = 0;
     for item in &mut storage.data {
@@ -367,7 +370,7 @@ mod tests {
                 Ok(())
             }
         }
-        let mut storage = load_storage::<Example>(TESTDIR_PATH).unwrap();
+        let mut storage = load_storage::<Example>("data/123423").unwrap();
         for item in 1..3 {
             storage.data.push(Example::new(
                 &format!("{}", item),
@@ -391,7 +394,7 @@ mod tests {
         assert_eq!(storage.data.get(4).unwrap().name, "104");
         assert_eq!(storage.data.get(5).unwrap().name, "1009");
 
-        assert_eq!(storage.data[5].get_path().unwrap(), TESTDIR_PATH);
+        assert_eq!(storage.data[5].get_path().unwrap(), "data/123423");
         // Remove storage from FS
         storage.remove();
     }
@@ -440,7 +443,7 @@ mod tests {
             }
         }
         // Lets create new storage
-        let mut storage = load_storage::<Example>(TESTDIR_PATH).unwrap();
+        let mut storage = load_storage::<Example>("data/234234j").unwrap();
         add_to_storage(&mut storage, Example::new("1", "", "Apple")).unwrap();
         add_to_storage(&mut storage, Example::new("2", "", "Banana")).unwrap();
         add_to_storage(&mut storage, Example::new("3", "", "Wohoo")).unwrap();
@@ -452,7 +455,7 @@ mod tests {
         drop(storage);
 
         // Load demo data from storage
-        let storage = load_storage::<Example>(TESTDIR_PATH).unwrap();
+        let storage = load_storage::<Example>("data/234234j").unwrap();
         // Check sum of data
         assert_eq!(storage.data.len(), 3);
         // Check content of data

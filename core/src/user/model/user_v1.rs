@@ -17,12 +17,16 @@
 
 use crate::email;
 use crate::prelude::*;
+use crate::storage;
 use crate::user::password::*;
 use crate::user::User;
+use serde::{Deserialize, Serialize};
 use std::env;
 
+#[derive(Serialize, Deserialize)]
 pub struct UserV1 {
     id: Option<String>,
+    path: Option<String>,
     name: Option<String>,
     address: Option<String>,
     email: Option<String>,
@@ -42,6 +46,7 @@ impl New for UserV1 {
     fn new() -> Self {
         UserV1 {
             id: None,
+            path: None,
             name: None,
             address: None,
             email: None,
@@ -288,6 +293,35 @@ impl User for UserV1 {
                 .to_owned())
             }
         }
+        Ok(())
+    }
+}
+
+/**
+ * StorageObject implementation for UserV1
+ */
+impl storage::StorageObject for UserV1 {
+    fn get_id<'a>(&'a self) -> Option<&'a str> {
+        match &self.id {
+            Some(id) => Some(id.as_ref()),
+            None => None,
+        }
+    }
+    fn save(&self) -> Result<(), String> {
+        storage::save_storage_object(self)
+    }
+    // TODO: Fix this one!
+    fn reload(&mut self) -> Result<(), String> {
+        Ok(())
+    }
+    fn get_path(&self) -> Option<&str> {
+        match &self.path {
+            Some(path) => Some(path.as_ref()),
+            None => None,
+        }
+    }
+    fn set_path(&mut self, path: &str) -> Result<(), String> {
+        self.path = Some(path.to_owned());
         Ok(())
     }
 }
