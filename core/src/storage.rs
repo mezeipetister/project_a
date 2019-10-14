@@ -28,6 +28,9 @@ use serde::{Deserialize, Serialize};
  *  - Deserialize  -|      and StorageObject.save() method
  */
 
+/// # StorageObject
+/// Storage can hold any StorageObject<T>.
+/// Storage object ensures that an object can save and reload itself.
 pub trait StorageObject {
     fn get_id(&self) -> Option<&str>;
     fn save(&self) -> Result<(), String>;
@@ -52,7 +55,13 @@ pub struct Storage<T> {
 /// # Load storage objects from path
 /// We use turbofish style
 /// ```rust
-/// // TODO: Code goes here
+/// use core_lib::storage::*;
+/// struct Animal {
+///     id: u32,
+///     name: String,
+/// }
+/// let storage = load_storage::<Animal>("data/animals").unwrap();
+/// assert_eq!(storage.data.len(), 0);
 /// ```
 pub fn load_storage<T>(path: &'static str) -> Result<Storage<T>, String> {
     let storage: Storage<T> = Storage {
@@ -62,26 +71,87 @@ pub fn load_storage<T>(path: &'static str) -> Result<Storage<T>, String> {
     Ok(storage)
 }
 
-/**
- * Add StorageObject to Storage and returns NO reference
- */
-pub fn add_to_storage<T>(storage: &mut Storage<T>, storage_object: T) -> Result<(), String>
-where
-    T: StorageObject,
+/// # Add StorageObject to Storage
+/// Add StorageObject to Storage and returns NO reference.
+/// ```rust,no_run
+/// use core_lib::storage::*;
+/// struct Animal {
+///     id: u32,
+///     name: String,
+/// }
+/// impl StorageObject for Animal {
+///     fn get_id(&self) -> Option<&str> {
+///         Some("1")
+///     }
+///     fn save(&self) -> Result<(), String> {
+///         Ok(())
+///     }
+///     fn reload(&mut self) -> Result<(), String> {
+///         Ok(())
+///     }
+///     fn get_path(&self) -> Option<&str> {
+///         Some("path")
+///     }
+///     fn set_path(&mut self, path: &str) -> Result<(), String> {
+///         Ok(())
+///     }
+/// }
+/// let mut storage = load_storage::<Animal>("data/animals").unwrap();
+/// let dog = Animal { id: 1, name: "Puppy Joe".to_owned(), };
+/// let cat = Animal { id: 2, name: "Purple Rainbow".to_owned(), };
+/// add_to_storage(&mut storage, cat).unwrap();
+/// assert_eq!(storage.data[0].name, "Puppy Joe".to_owned());
+/// assert_eq!(storage.data[1].name, "Purple Rainbow".to_owned());
+/// ```
+pub fn add_to_storage<T>(storage: &mut Storage<T>, mut storage_object: T) -> Result<(), String>
+    where
+        T: StorageObject,
 {
+    storage_object.set_path(storage.path).unwrap();
     storage.data.push(storage_object);
     Ok(())
 }
 
-/**
- * Add StorageObject to Storage and returns reference to it
- */
-pub fn add_to_storage_and_return_ref<'a, T>(
-    storage: &'a mut Storage<T>,
+/// # Add StorageObject to Storage and returns reference to it
+/// ```rust,no_run
+/// use core_lib::storage::*;
+/// struct Animal {
+///     id: u32,
+///     name: String,
+/// }
+/// impl StorageObject for Animal {
+///     fn get_id(&self) -> Option<&str> {
+///         Some("1")
+///     }
+///     fn save(&self) -> Result<(), String> {
+///         Ok(())
+///     }
+///     fn reload(&mut self) -> Result<(), String> {
+///         Ok(())
+///     }
+///     fn get_path(&self) -> Option<&str> {
+///         Some("path")
+///     }
+///     fn set_path(&mut self, path: &str) -> Result<(), String> {
+///         Ok(())
+///     }
+/// }
+/// let mut storage = load_storage::<Animal>("data/animals").unwrap();
+/// let dog = Animal { id: 1, name: "Puppy Joe".to_owned(), };
+/// let cat = Animal { id: 2, name: "Purple Rainbow".to_owned(), };
+/// let mut dog_ref = add_to_storage_and_return_ref(&mut storage, dog).unwrap();
+/// dog_ref.name = "Puppy Joe+".to_owned();
+/// let mut cat_ref = add_to_storage_and_return_ref(&mut storage, cat).unwrap();
+/// cat_ref.name = "Purple Rainbow+".to_owned();
+/// assert_eq!(storage.data[0].name, "Puppy Joe+".to_owned());
+/// assert_eq!(storage.data[1].name, "Purple Rainbow+".to_owned());
+/// ```
+pub fn add_to_storage_and_return_ref<T>(
+    storage: &mut Storage<T>,
     storage_object: T,
-) -> Result<&'a mut T, String>
-where
-    T: StorageObject,
+) -> Result<&mut T, String>
+    where
+        T: StorageObject,
 {
     let id = storage_object.get_id().unwrap().to_owned();
     storage.data.push(storage_object);
@@ -100,9 +170,20 @@ where
     }
 }
 
-/**
- * Serialize object<T> -> Result<String, String>
- */
+/// # Serialize object<T> -> Result<String, String>
+/// Serialize a given object to String
+/// ```rust
+/// use serde::{Deserialize, Serialize};
+/// use core_lib::storage::*;
+/// #[derive(Serialize, Deserialize)]
+/// struct Animal {
+///     id: u32,
+///     name: String,
+/// }
+/// let dog = Animal { id: 1, name: "Puppy Joe".to_owned() };
+/// let serialized_object = serialize_object(&dog).unwrap();
+/// assert_eq!(serialized_object, "---\nid: 1\nname: Puppy Joe".to_owned());
+/// ```
 pub fn serialize_object<T: Serialize>(object: &T) -> Result<String, String> {
     match serde_yaml::to_string(object) {
         Ok(result) => Ok(result),
@@ -112,12 +193,22 @@ pub fn serialize_object<T: Serialize>(object: &T) -> Result<String, String> {
 
 /// # Deserialize &str into object<T>
 /// ```rust
+/// use serde::{Deserialize, Serialize};
+/// use core_lib::storage::*;
+/// #[derive(Serialize, Deserialize)]
+/// struct Animal {
+///     id: u32,
+///     name: String,
+/// }
+/// let animal: Animal = deserialize_object("---\nid: 1\nname: Puppy Joe").unwrap();
+/// assert_eq!(animal.id, 1);
+/// assert_eq!(animal.name, "Puppy Joe".to_owned());
 /// ```
 /// IMPORTANT: deserializable struct currently cannot have &str field.
 //  TODO: Lifetime fix for `&str field type.
 pub fn deserialize_object<'a, T: ?Sized>(s: &str) -> Result<T, String>
-where
-    for<'de> T: Deserialize<'de> + 'a,
+    where
+            for<'de> T: Deserialize<'de> + 'a,
 {
     match serde_yaml::from_str(s) {
         Ok(t) => Ok(t),
@@ -196,9 +287,9 @@ mod tests {
                 &format!("{}", item),
             ));
         }
-        add_to_storage(&mut storage, Example::new("102", "data/storage", "102")).unwrap();
-        add_to_storage(&mut storage, Example::new("103", "data/storage", "103")).unwrap();
-        add_to_storage(&mut storage, Example::new("104", "data/storage", "104")).unwrap();
+        add_to_storage(&mut storage, Example::new("102", "", "102")).unwrap();
+        add_to_storage(&mut storage, Example::new("103", "", "103")).unwrap();
+        add_to_storage(&mut storage, Example::new("104", "", "104")).unwrap();
 
         let mut item =
             add_to_storage_and_return_ref(&mut storage, Example::new("105", "data/storage", "105"))
@@ -211,5 +302,7 @@ mod tests {
         assert_eq!(storage.data.get(3).unwrap().name, "103");
         assert_eq!(storage.data.get(4).unwrap().name, "104");
         assert_eq!(storage.data.get(5).unwrap().name, "1009");
+
+        assert_eq!(storage.data[5].get_path().unwrap(), "data/storage");
     }
 }
