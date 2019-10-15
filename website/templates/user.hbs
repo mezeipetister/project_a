@@ -1,0 +1,21 @@
+{{#*inline "page"}}
+
+<h1>Users</h1>
+<section id="users">
+    {{#each items}}
+    ID: {{ this.id }} <br>
+    Name: {{ this.name }} <br>
+    Email: {{ this.email }}
+    <hr>
+    {{/each}}
+</section>
+
+<form action="/user" method="POST">
+    <h2>Add new user</h2><br>
+    <input type="text" pattern=".{5,}" name="name" placeholder="Name"><br>
+    <input type="text" pattern=".{5,}" name="email" placeholder="Email"><br>
+    <button type="submit">Add user</button>
+</form>
+
+{{/inline}}
+{{~> (parent)~}}

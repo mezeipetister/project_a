@@ -19,130 +19,77 @@
 
 #[macro_use]
 extern crate rocket;
+extern crate core_lib;
 extern crate serde_derive;
 
 use self::handlebars::{
     Context, Handlebars, Helper, HelperResult, JsonRender, Output, RenderContext,
 };
+use core_lib::prelude::*;
+use core_lib::storage::*;
+use core_lib::user::model::user_v1::UserV1;
+use core_lib::user::User;
+use core_lib::user::*;
 use rocket::http::RawStr;
+use rocket::request::Form;
 use rocket::response::{status, NamedFile, Redirect};
 use rocket::Request;
+use rocket::{Data, State};
 use rocket_contrib::serve::StaticFiles;
 use rocket_contrib::templates::{handlebars, Template};
 use serde::Serialize;
 use std::io;
 use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 #[derive(Serialize)]
-struct TemplateContext {
+struct TemplateContext<'a, T> {
     title: &'static str,
     name: Option<String>,
-    items: Vec<&'static str>,
+    items: &'a Vec<T>,
     // This key tells handlebars which template is the parent.
     parent: &'static str,
 }
 
 #[get("/")]
-fn index() -> Template {
+fn index() -> Redirect {
+    Redirect::to("/user")
+}
+
+#[get("/user")]
+fn user(data: State<DataLoad>) -> Template {
     Template::render(
-        "index",
+        "user",
         &TemplateContext {
-            title: "Index",
+            title: "User list",
             name: None,
-            items: Vec::new(),
+            items: &data.inner().users.lock().unwrap().data,
             parent: "layout",
         },
     )
 }
 
-#[get("/redirect")]
-fn redirect() -> Redirect {
-    Redirect::to("/")
+#[derive(FromForm)]
+struct UserPost {
+    name: Option<String>,
+    email: Option<String>,
 }
 
-#[get("/hello/<name>")]
-fn hello(name: String) -> Template {
-    Template::render(
-        "index",
-        &TemplateContext {
-            title: "Hello",
-            name: Some(name),
-            items: vec!["One", "Two", "Three"],
-            parent: "layout",
-        },
-    )
-}
-
-#[get("/submit_order?<name>&<age>")]
-fn submit_order(name: &RawStr, age: usize) -> status::Accepted<String> {
-    status::Accepted(Some(format!("Hello bello: {}, your age is: {}", name, age)))
-}
-
-#[get("/about")]
-fn about() -> Template {
-    Template::render(
-        "about",
-        &TemplateContext {
-            title: "About",
-            name: None,
-            items: vec!["Four", "Five", "Six"],
-            parent: "layout",
-        },
-    )
-}
-
-#[get("/about2")]
-fn about2() -> Template {
-    Template::render(
-        "about",
-        &TemplateContext {
-            title: "About",
-            name: None,
-            items: vec!["Four", "Five", "Six"],
-            parent: "layout2",
-        },
-    )
-}
-
-#[get["/login"]]
-fn login() -> Template {
-    #[derive(Serialize)]
-    struct Data {
-        title: &'static str,
-        name: &'static str,
-        age: u32,
-        parent: &'static str,
-    }
-    Template::render(
-        "login",
-        &Data {
-            title: "Login",
-            name: "Peter Mezei",
-            age: 30,
-            parent: "layout",
-        },
-    )
-}
-
-#[post["/login"]]
-fn login_post() -> Redirect {
-    Redirect::to("/")
-}
-
-#[get["/logout"]]
-fn logout() -> Template {
-    #[derive(Serialize)]
-    struct C {
-        title: &'static str,
-        parent: &'static str,
-    };
-    Template::render(
-        "logout",
-        &C {
-            title: "Logout",
-            parent: "layout",
-        },
-    )
+#[post("/user", data = "<user>")]
+fn user_post(user: Form<UserPost>, data: State<DataLoad>) -> Redirect {
+    let mut new_user = UserV1::new();
+    new_user
+        .set_user_id(&format!(
+            "myidis_{}",
+            data.inner().users.lock().unwrap().data.len() + 1
+        ))
+        .unwrap();
+    new_user.set_user_name(user.name.as_ref().unwrap()).unwrap();
+    new_user
+        .set_user_email(user.email.as_ref().unwrap())
+        .unwrap();
+    add_to_storage(&mut data.inner().users.lock().unwrap(), new_user).unwrap();
+    Redirect::to("/user")
 }
 
 #[get("/static/<file..>")]
@@ -157,27 +104,22 @@ fn not_found(req: &Request<'_>) -> Template {
     Template::render("error/404", &map)
 }
 
-fn rocket() -> rocket::Rocket {
+struct DataLoad {
+    users: Mutex<Storage<UserV1>>,
+}
+
+fn rocket(data: DataLoad) -> rocket::Rocket {
     rocket::ignite()
-        .mount(
-            "/",
-            routes![
-                static_file,
-                index,
-                login_post,
-                redirect,
-                hello,
-                about,
-                about2,
-                submit_order,
-                login,
-                logout
-            ],
-        )
+        .manage(data)
+        .mount("/", routes![static_file, index, user, user_post,])
         .attach(Template::fairing())
         .register(catchers![not_found])
 }
 
 fn main() {
-    rocket().launch();
+    let user_storage = load_storage::<UserV1>("../data/users").unwrap();
+    let data = DataLoad {
+        users: Mutex::new(user_storage),
+    };
+    rocket(data).launch();
 }
